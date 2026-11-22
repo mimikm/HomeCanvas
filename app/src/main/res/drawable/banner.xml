@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp" android:height="180dp"
+    android:viewportWidth="320" android:viewportHeight="180">
+    <path android:fillColor="#03A9F4" android:pathData="M0,0h320v180h-320z" />
+    <!-- house outline -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M160,38 L100,90 L114,90 L114,142 L206,142 L206,90 L220,90 Z M128,128 L128,84 L160,56 L192,84 L192,128 Z" />
+    <!-- node graph inside -->
+    <path android:fillColor="#FFFFFF" android:pathData="M154,84a6,6 0,1 1,12 0a6,6 0,1 1,-12 0z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M158,90h4v38h-4z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M140,98a5,5 0,1 1,10 0a5,5 0,1 1,-10 0z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M170,104a5,5 0,1 1,10 0a5,5 0,1 1,-10 0z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M146,101 L159,114 L157,117 L144,104 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M174,107 L161,120 L163,123 L176,110 Z" />
+</vector>
