@@ -13,7 +13,8 @@ It's a native Android screensaver (`DreamService`) with a full-screen WebView, s
 - **Layout width override:** the Streamer renders at about 960 CSS px wide, which gives HA a mobile-style layout. Set this to `1280` or `1920` for a desktop-style layout.
 - Optional interactive mode: the remote controls the dashboard and Back exits.
 - Works with `http://` and self-signed `https://`.
-- Can be configured from your PC over adb, so you don't have to type a token with the remote.
+- **Phone setup:** scan the QR code on the TV and fill in the URL and token on your phone, so there's no typing with the remote.
+- Can also be configured from your PC over adb.
 
 ## Build
 
@@ -39,7 +40,19 @@ To build locally, use Android Studio or `gradle assembleRelease` with the Androi
 
 ## Configure
 
-Open **HomeCanvas** from the apps row and enter your dashboard URL, or push the settings from your PC:
+### From your phone (easiest)
+
+1. Open **HomeCanvas** from the apps row on the TV.
+2. Scan the QR code on the right of the screen with your phone's camera. Your phone must be on the same network.
+3. Paste your dashboard URL and token, then tap **Save** or **Save & preview on TV**.
+
+The setup page only works while the HomeCanvas settings screen is open on the TV. The link includes a random key that changes each time you open the app, so nobody else on your network can change the settings.
+
+### On the TV
+
+Enter the settings with the remote and press **Save**.
+
+### From your PC (adb)
 
 ```bash
 adb shell am start -n com.mimikm.homecanvas/.SettingsActivity \
@@ -53,7 +66,7 @@ Authentication options, from easiest to most robust:
 | Option | How |
 |---|---|
 | Log in once | Click **Open HA / log in** in the app, sign in, and tick "Keep me logged in". |
-| Long-lived token | HA → Profile → Security → Long-lived access tokens. Paste it with the adb command above. |
+| Long-lived token | HA → Profile → Security → Long-lived access tokens. Paste it on the phone setup page or with the adb command above. |
 | Trusted networks | Add the Streamer's IP to HA's `trusted_networks` auth provider with `allow_bypass_login: true`. |
 
 Tip: make a dedicated dashboard for the TV, and use [kiosk-mode](https://github.com/NemesisRE/kiosk-mode) (`?kiosk`) to hide the header and sidebar.

@@ -3,12 +3,14 @@ package com.mimikm.homecanvas;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.webkit.CookieManager;
 import android.webkit.WebStorage;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ public class SettingsActivity extends Activity {
     private EditText url, token, reload, width;
     private CheckBox bright, interactive, ignoreSsl;
     private Prefs prefs;
+    private ConfigServer configServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,12 @@ public class SettingsActivity extends Activity {
         }
         loadFields();
 
+        configServer = new ConfigServer(prefs, preview -> runOnUiThread(() -> {
+            loadFields();
+            Toast.makeText(this, "Settings saved from your phone", Toast.LENGTH_LONG).show();
+            if (preview) open(WebActivity.MODE_PREVIEW);
+        }));
+
         findViewById(R.id.save).setOnClickListener(v -> {
             save();
             Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
@@ -59,10 +68,10 @@ public class SettingsActivity extends Activity {
 
         String component = new ComponentName(this, HaDreamService.class).flattenToShortString();
         ((TextView) findViewById(R.id.help)).setText(
-            "Set as screensaver (from a computer, with ADB/developer options enabled on the TV):\n\n"
+            "Activate as the screensaver (one-time, from a computer with adb – Google TV has no menu for this):\n\n"
             + "  adb connect <tv-ip>\n"
             + "  adb shell settings put secure screensaver_components " + component + "\n"
-            + "  adb shell settings put secure screensaver_enabled 1\n"
+            + "  adb shell settings put secure screensaver_enabled 1\n\n"
             + "Test now:\n"
             + "  adb shell am start -n com.android.systemui/.Somnambulator\n\n"
             + "Revert to Google TV Ambient mode:\n"
@@ -82,6 +91,29 @@ public class SettingsActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateStatus();
+        configServer.start();
+        showQr();
+    }
+
+    @Override
+    protected void onPause() {
+        configServer.stop();
+        super.onPause();
+    }
+
+    private void showQr() {
+        ImageView qr = findViewById(R.id.qr);
+        TextView qrUrl = findViewById(R.id.qrUrl);
+        String ip = ConfigServer.localIp(this);
+        if (ip == null) {
+            qr.setImageBitmap(null);
+            qrUrl.setText("Not connected to a network");
+            return;
+        }
+        String link = configServer.url(ip);
+        Bitmap bmp = ConfigServer.qr(link, 512);
+        qr.setImageBitmap(bmp);
+        qrUrl.setText("or type on your phone:\n" + link);
     }
 
     private void open(String mode) {
@@ -151,13 +183,13 @@ public class SettingsActivity extends Activity {
         }
     }
 
-    private static String normaliseUrl(String s) {
+    static String normaliseUrl(String s) {
         s = s.trim();
         if (!s.isEmpty() && !s.contains("://")) s = "http://" + s;
         return s;
     }
 
-    private static int parseInt(String s) {
+    static int parseInt(String s) {
         try { return Math.max(0, Integer.parseInt(s.trim())); } catch (NumberFormatException e) { return 0; }
     }
 }

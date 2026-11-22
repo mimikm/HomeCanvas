@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111418"
+    android:orientation="horizontal">
+
+<ScrollView
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="64dp"
-        android:paddingEnd="64dp"
+        android:paddingStart="56dp"
+        android:paddingEnd="32dp"
         android:paddingTop="32dp"
         android:paddingBottom="32dp">
 
@@ -98,3 +104,57 @@
             android:fontFamily="monospace" />
     </LinearLayout>
 </ScrollView>
+
+    <LinearLayout
+        android:layout_width="340dp"
+        android:layout_height="match_parent"
+        android:background="#1A1F25"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set up from your phone"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="Scan with your phone camera to paste\nthe URL and token there"
+            android:textColor="#9AA4AF"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/qr"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="16dp"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/qrUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:textColor="#C9D1D9"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Phone must be on the same network.\nThe page works while this screen is open."
+            android:textColor="#6E7781"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>
