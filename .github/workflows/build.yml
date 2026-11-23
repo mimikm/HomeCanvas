@@ -3,18 +3,29 @@ name: Build APK
 on:
   push:
     branches: [main]
-    tags: ['v*']
+    tags: ['*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing release tag to build and attach the APK to (e.g. 0.2.0). Leave empty for a normal build.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
+
+env:
+  BUILD_REF: ${{ inputs.release_tag || github.ref }}
+  BUILD_NAME: ${{ inputs.release_tag || github.ref_name }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.BUILD_REF }}
 
       - uses: actions/setup-java@v5
         with:
@@ -40,16 +51,20 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           gradle --no-daemon assembleRelease
+          NAME="${BUILD_NAME//\//-}"
+          if [[ "$NAME" =~ ^v?[0-9] ]]; then NAME="v${NAME#v}"; fi
           mkdir -p out
-          cp app/build/outputs/apk/release/app-release.apk out/homecanvas-${GITHUB_REF_NAME//\//-}.apk
+          cp app/build/outputs/apk/release/app-release.apk "out/homecanvas-${NAME}.apk"
+          ls -l out
 
       - uses: actions/upload-artifact@v5
         with:
           name: homecanvas-apk
           path: out/*.apk
 
-      - name: Attach to GitHub release
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Attach APK to GitHub release
+        if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag != ''
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.BUILD_NAME }}
           files: out/*.apk
